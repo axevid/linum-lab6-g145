@@ -1,17 +1,39 @@
-# Makefile for testresistance and libresistance .so
-
-CC = gcc
+# Makefile for testresistance and libresistance.so
 
 all:	testresistance libresistance.so
 
-testresistance:	test_libresistance.c libresistance.so
-	$(CC) -Wall -o testresistance test_libresistance.c -L/home/antero/tests/harj6/linum-lab6-g145/src/lib1  -lresistance -lm
+# Which complier
+CC = gcc
 
-libresistance.o:	libresistance.c libresistance.h 
-#	$(CC) -c -shared -fPIC libresistance.c -lm -o libresistance.so libresistance.o
-	$(CC) -c -o libresistance.o libresistance.c -lm
+# Where to install
+INSTDIR = /usr/local/lib
+
+# Where are include files kept
+INCLUDE = .
+
+# Options
+CFLAGS = -O -Wall
+
+testresistance:	test_libresistance.c libresistance.so
+	$(CC) $(CFLAGS) -o testresistance test_libresistance.c -lresistance -lm
+
 libresistance.so:
-	$(CC) -c -shared -fPIC libresistance.c 
+	$(CC) $(CFLAGS) -c -shared -fPIC libresistance.c 
 	$(CC) -shared -o libresistance.so libresistance.o
 clean:
 	rm -f libresistance.so libresistance.o testresistance libresistance.so
+install: libresistance.so
+	@if [ -d $(INSTDIR) ]; \
+	then \
+	cp libresistance.so $(INSTDIR);\
+	chmod a+x $(INSTDIR)/libresistance.so;\
+	chmod og-w $(INSTDIR)/libresistance.so;\
+	echo "Installed in $(INSTDIR)";\
+	else \
+		echo "Sorry, $(INSTDIR) does not exist";\
+	fi
+	ldconfig
+uninstall:
+	@echo "Uninstalling $(INSTDIR)/program1" ;\
+	rm -f $(INSTDIR)/libresistance.so;
+	ldconfig
