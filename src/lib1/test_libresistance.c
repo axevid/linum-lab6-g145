@@ -6,7 +6,6 @@ int main(void)
   float test1[2]={1.0f,1.0f};
   float test2[3]={1.0f,1.0f,1.0f};
   float test3[3]={1.0f,1.0f,0.0f};
-  float test4[3]={1.0f,1.0f,1.0f};
   
   // float calc_resistance (int count, char conn, float * array);
   printf("Parallel resistance with 2 1 ohm resistors\n %f\n", calc_resistance(2,'P', test1));

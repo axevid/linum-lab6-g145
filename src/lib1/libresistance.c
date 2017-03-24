@@ -71,15 +71,3 @@ float calc_resistance (int count, char conn, float *array) {
   return(equivalent_resistance);  
 }
  
-/*
-float parallel_resistance(int count, float *array){
-  if (count==0) return(0.0f);
-  else return 
-}
-
-float series_resistance(int count, float *array){
-  return(float[count]+
-
-
-}
-*/
