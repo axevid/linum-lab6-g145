@@ -50,6 +50,21 @@ En algoritmbeskrivning.
 Hur du kompilerat och testat det i ett eget program. Beskriv vilka kommandon du använder för att kompilera biblioteket och hur du sedan använder biblioteket i ditt huvudprogram.
 Beskriv de växlar du använt till kommandona ovan och vad var och en av dessa har för funktion.
 \end{enumerate}
+\begin{verbatim}
+Biliotek 2, libpower.so
+
+Ström som passerar ett motstånd värmer upp motståndet med en viss effekt (P). Effekten kan beräknas med hjälp av spänningen och ström eller spänning och motståndsvärdet enligt dessa formler:
+
+P = U * I  (Spänning gånger strömmen)
+
+P = U^2 / R (Spänning i kvadrat delat i resistansen)
+
+Skriv ett bibliotek, libpower.so, med funktioner för att beräkna den totala effektutvecklingen i en krets med en spänningskälla kopplad i serie med en en resistans:
+
+float calc_power_r(float volt, float resistance);
+
+float calc_power_i(float volt, float current);
+\end{verbatim}
 
 \vspace{10pt}
 Svar:
