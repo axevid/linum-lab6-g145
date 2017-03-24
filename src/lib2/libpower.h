@@ -1,5 +1,5 @@
-#ifndef LIBPOWER_H
-#define LIBPOWER_H
+#ifndef __LIBPOWER_H__
+#define __LIBPOWER_H__
 
 float calc_power_i(float volt, float current);
 
