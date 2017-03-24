@@ -27,11 +27,11 @@
 #include <stdio.h>
 #include "libresistance.h"
 float calc_resistance (int count, char conn, float *array) {
-  float tmp = 0;
-  float equivalent_resistance = 0;
+  float tmp = 0.0f;
+  float equivalent_resistance = 0.0f;
   int i = 0;
   
-  if (count==0) return 0.0f;
+  if (count==0) return(0.0f);
   if (array == NULL)
     {
       return(-1); /* handle null pointer */
@@ -42,7 +42,11 @@ float calc_resistance (int count, char conn, float *array) {
       switch(conn) {
       case PARALLEL: /* parallel resistance */
 	/* Code */
-	for(i=0;i<count;i++)
+	for(i=0;i<count;i++) if (array[i] == 0) return(-1); /* check for 1/0 */
+
+	equivalent_resistance = (1.0f/array[0]); /* first term */	
+
+	for(i=1;i<count;i++) /* loop for the rest */
 	  {
 	    tmp = (1.0f/equivalent_resistance)+((1.0f/array[i]));        
 	    equivalent_resistance = (1.0f/tmp);
