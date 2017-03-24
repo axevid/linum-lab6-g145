@@ -13,7 +13,7 @@ int main(void)
   printf("it should be 0.5\n");
   
 printf("Series resistance with 3 1 ohm resistors\n %f\n", calc_resistance(3,'S', test2));
-  printf("it should be 2\n");
+  printf("it should be 3\n");
   printf("Series resistance with 2 1 ohm and 1 0 ohm resistors\n %f\n", calc_resistance(3,'S', test3));
   printf("it should be 2\n");
 
