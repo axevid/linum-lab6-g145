@@ -24,8 +24,8 @@
 #
 */
 
-#include<stdio.h>
-
+#include <stdio.h>
+#include "libresistance.h"
 float calc_resistance (int count, char conn, float *array) {
   float tmp = 0;
   float equivalent_resistance = 0;
@@ -40,15 +40,15 @@ float calc_resistance (int count, char conn, float *array) {
     {
       // Proceed
       switch(conn) {
-      case 'P': /* parallel resistance */
+      case PARALLEL: /* parallel resistance */
 	/* Code */
-	for(i=1;i<count;i++)
+	for(i=0;i<count;i++)
 	  {
 	    tmp = (1.0f/equivalent_resistance)+((1.0f/array[i]));        
 	    equivalent_resistance = (1.0f/tmp);
 	  };
 	break;
-      case 'S': /* series resistance */
+      case SERIAL: /* series resistance */
 	/* Code */
 	for (i = 0; i < count; i++) {
 	  equivalent_resistance = equivalent_resistance + array[i];
