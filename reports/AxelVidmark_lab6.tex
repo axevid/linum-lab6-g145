@@ -32,236 +32,64 @@
 \newcommand{\eqr}[1]{Eq. \eqref{eq:#1}}
 
 \author{Axel Vidmark 8710171417 \href{mailto:axel.vidmark@gmail.com}{\texttt{axel.vidmark@gmail.com}}}
-\title{Linux som utvecklingsmiljö \\ Övning 3 - Versionshantering}
+\title{Linux som utvecklingsmiljö \\ Övning 6 - Bibliotek}
 \begin{document}
 \maketitle
 
 % \section*{Collaboration}
 % All tasked were solved by me alone but a comparison of results were made with Fredrik Backman.
 
-\section*{CVS}\label{sec:cvs}
+\section*{Del 1}\label{sec:del1}
 
 Uppgift:
 \begin{enumerate}
-\item Skapa ett lokalt repository.
-\item Skapa en egen katalog med ett par filer i den katalogen.
-\item Koppla ihop och kopiera din nyligen skapade katalog och dess filer till ditt CVS repository..
-\item Ändra i en av dina filer.
-\item Redovisa i CVS vad som ändrats i de filer som finns i din lokala katalog jämfört med de som finns i repositoryt.
-Uppdatera ditt repository så det innehåller din uppdaterade fil.
+Redovisa en beskrivning av det egna biblioteket och applikationen vad gäller:
+
+Funktion och användning.
+En algoritmbeskrivning.
+Hur du kompilerat och testat det i ett eget program. Beskriv vilka kommandon du använder för att kompilera biblioteket och hur du sedan använder biblioteket i ditt huvudprogram.
+Beskriv de växlar du använt till kommandona ovan och vad var och en av dessa har för funktion.
 \end{enumerate}
 
 \vspace{10pt}
 Svar:
 
 \begin{verbatim}
-axvi@axvi-VirtualBox:/tmp$ sudo apt-get install cvs
-axvi@axvi-VirtualBox:/tmp$ mkdir -p /home/axvi/cvs_repository
-axvi@axvi-VirtualBox:/tmp$ export CVSROOT=:local:/home/axvi/cvs_repository
-axvi@axvi-VirtualBox:/tmp$ export EDITOR=nano
-axvi@axvi-VirtualBox:/tmp$ cvs init
+axvi@axvi-VirtualBox:/tmp$ sudo apt-get install git
 
-axvi@axvi-VirtualBox:/tmp/linum3$ ls / > fil1.txt
-axvi@axvi-VirtualBox:/tmp/linum3$ seq 1 5 1000 | tee nummerfil1.txt nummerfil2.txt
-
-axvi@axvi-VirtualBox:/tmp/linum3$ cvs import linum3 LinumCVSproject1 v1
-Log message unchanged or not specified
-a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs
-Action: (continue) c
-N linum3/nummerfil1.txt
-N linum3/fil1.txt
-N linum3/nummerfil2.txt
-
-No conflicts created by this import
-
-
-axvi@axvi-VirtualBox:/tmp/linum3$ cd ..
-axvi@axvi-VirtualBox:/tmp$ rm -rf linum3
-axvi@axvi-VirtualBox:/tmp$ cvs checkout linum3
-cvs checkout: Updating linum3
-U linum3/fil1.txt
-U linum3/nummerfil1.txt
-U linum3/nummerfil2.txt
-
-axvi@axvi-VirtualBox:/tmp$ cd linum3
-axvi@axvi-VirtualBox:/tmp/linum3$ ls / >> fil1.txt 
-axvi@axvi-VirtualBox:/tmp/linum3$ cvs diff
-cvs diff: Diffing .
-Index: fil1.txt
-===================================================================
-RCS file: /home/axvi/cvs_repository/linum3/fil1.txt,v
-retrieving revision 1.1.1.1
-diff -r1.1.1.1 fil1.txt
-22a23,44
-> bin
-> boot
-> cdrom
-> dev
-> etc
-> home
-> initrd.img
-> lib
-> lost+found
-> media
-> mnt
-> opt
-> proc
-> root
-> run
-> sbin
-> srv
-> sys
-> tmp
-> usr
-> var
-> vmlinuz
 
 \end{verbatim}
 
 
 \cleardoublepage
 
-\section*{Subversion}\label{sec:svn}
+\section*{Del 2}\label{sec:del2}
 
 Uppgift:
-\\Skapa en mapp i din katalogstruktur som du ska använda som första lokala arbetskatalogen för ett projekt med Subversion..
-\\Logga in på den svn-server som finns på svn://130.239.163.12 och checka ut det projekt som finns i katalogen labb4.
-\\Logga in med kommandot:
-\\svn co svn://130.239.163.12/labb4 . --username labb4
-\\(svn<space>co<space>svn://130.239.163.12/labb4<space>.<space>--username<space>labb4)
-\\Ange lösenordet labb4\_linUM
-\\Nu bör du ha fått ett gäng nya filer i din arbetskatalog varav en heter \verb+READ_THIS_FILE.txt+. Läs denna innan du fortsätter.
+Skriv en Makefile med dessa regler:
 
+lib, för att bygga enbart biblioteket.
+all, För att bygga både programmet och biblioteken där biblioteken läggs i en egen katalog, lib,  under den man är jus nu, tex /home/bl/electro/lib/. Här ska programmet länkas för att använda de lokala biblioteken. OBS! Ni får inte temporärt ändra libsökvägarna i LD_LIBRARY_PATH!
+install. Här kopierar du både programmet och biblioteken till lämpliga kataloger (tex /usr/bin/ och /usr/lib/) och länkar så att programmet använder de publika biblioteken.
+Redovisa en beskrivning av hur du länkat in alla 3 bibliotek och använt det i ett huvudprogram enligt ovan. Beskriv också vilka du jobbat med.
 
-Skapa en ny katalog i din arbetskatalog som du döper till ditt namn (om en sådan fil redan finns, ändra något i ditt filnamn så du inte skriver över något). Lägg till en text-fil i den nya katalogen och checka in både katalogen och filen tex med kommandona: 
+Beskriv vilka kommandon och växlar du använder för att kompilera biblioteken och hur du sedan använder biblioteken i ditt huvudprogram.
+ 
 \begin{verbatim}
 > mkdir bjorne_lindberg
 > echo "Hello svn world" > bjorne_lindberg/bl.txt
 > svn add bjorne_lindberg
 > svn commit -m "Lagt till en katalog med fil"
 \end{verbatim}
-\begin{enumerate}
-\item Ändra i filen users och lägg till ditt namn längst bak i den filen. 
-\item Checka in den filen igen.
-\item Lek med de olika svn-kommandona log, info, commit, update och diff för att få en bild av hur det fungerar.
-\item Skapa en ny katalog i din katalogstruktur, upprepa ovan så du får en till kopia av förrådet.
-\item Ändra nu i den fil du tidigare skapat från bägge ställena och se vad som händer när du checkar in dem efter att du ändrat i dem bägge. Ändra både på olika rader och på samma rad. När du ändrat på samma rader och försöker checka in resultaten kommer du att få konflikter. Lös dessa.
-\end{enumerate}
-\vspace{10pt}
-Svar:
 
-\begin{itemize}
-\item Lägg till mig själv i users.
-\begin{verbatim}
-axvi@axvi-VirtualBox:/tmp/linum3/svntesting$ echo "Axel Vidmark" >> users 
-axvi@axvi-VirtualBox:/tmp/linum3/svntesting$ tail -n 2 users 
-Roger Borgström 2017-02-24
-Axel Vidmark
-axvi@axvi-VirtualBox:/tmp/linum3/svntesting$ svn status
-M       users
-axvi@axvi-VirtualBox:/tmp/linum3/svntesting$ svn commit -m "la till i users"
-Sending        users
-Transmitting file data .
-Committed revision 2568.
-\end{verbatim}
+\cleardoublepage
 
-\item Lägg upp en kopia av repon:
-\begin{verbatim}
-axvi@axvi-VirtualBox:/tmp/linum3/svntestingcopy$ svn co svn://130.239.163.12/labb4 . --username labb4
-axvi@axvi-VirtualBox:/tmp/linum3/svntestingcopy$ echo "ändring på samma rad i kopian" > axel_vidmark/av.txt
-axvi@axvi-VirtualBox:/tmp/linum3/svntestingcopy$ echo "ändring på annan rad i kopian" >> axel_vidmark/av.txt
-axvi@axvi-VirtualBox:/tmp/linum3/svntestingcopy$ svn status
-M       axel_vidmark/av.txt
-axvi@axvi-VirtualBox:/tmp/linum3/svntestingcopy$ svn commit -m "en uppdatering"
-Sending        axel_vidmark/av.txt
-Transmitting file data .
-Committed revision 2569.
-axvi@axvi-VirtualBox:/tmp/linum3/svntestingcopy$ cd /tmp/linum3/svntesting
-axvi@axvi-VirtualBox:/tmp/linum3/svntesting$ echo "en liten annan ändring på första raden" > axel_vidmark/av.txt 
-axvi@axvi-VirtualBox:/tmp/linum3/svntesting$ echo "en liten annan ändring på andra raden" >> axel_vidmark/av.txt 
-axvi@axvi-VirtualBox:/tmp/linum3/svntesting$ svn status
-M       axel_vidmark/av.txt
-axvi@axvi-VirtualBox:/tmp/linum3/svntesting$ svn commit -m "en uppdatering till"
-Sending        axel_vidmark/av.txt
-Transmitting file data .svn: E160028: Commit failed (details follow):
-svn: E160028: File '/axel_vidmark/av.txt' is out of date
-\end{verbatim}
+\section*{Del 3}\label{sec:del3}
 
-\item Lös konflikten ovan genom att kolla på skillnaderna (först min egen ändring sen mellan repo och den), välja att lägga ihop dem med den ena delen före den andra och markera som löst.
-\begin{verbatim}
-axvi@axvi-VirtualBox:/tmp/linum3/svntesting$ svn diff
-Index: axel_vidmark/av.txt
-===================================================================
---- axel_vidmark/av.txt	(revision 2567)
-+++ axel_vidmark/av.txt	(working copy)
-@@ -1 +1,2 @@
--Hello svn world
-+en liten annan ändring på första raden
-+en liten annan ändring på andra raden
-axvi@axvi-VirtualBox:/tmp/linum3/svntesting$ svn update
-Updating '.':
-C    axel_vidmark/av.txt
-Updated to revision 2569.
-Conflict discovered in file 'axel_vidmark/av.txt'.
-Select: (p) postpone, (df) show diff, (e) edit file, (m) merge,
-        (mc) my side of conflict, (tc) their side of conflict,
-        (s) show all options: df
---- axel_vidmark/av.txt.r2569	- THEIRS
-+++ axel_vidmark/av.txt	- MERGED
-@@ -1,2 +1,7 @@
-+<<<<<<< .mine
-+en liten annan ändring på första raden
-+en liten annan ändring på andra raden
-+=======
- ändring på samma rad i kopian
- ändring på annan rad i kopian
-+>>>>>>> .r2569
-Select: (p) postpone, (df) show diff, (e) edit file, (m) merge,
-        (r) mark resolved, (mc) my side of conflict,
-        (tc) their side of conflict, (s) show all options: m
-Merging 'axel_vidmark/av.txt'.
-Conflicting section found during merge:
-(1) their version (at line 2)                       |(2) your version (at line 2)                        
-----------------------------------------------------+----------------------------------------------------
-ändring på samma rad i kopian                       |en liten annan ändring på första raden              
-ändring på annan rad i kopian                       |en liten annan ändring på andra raden               
-----------------------------------------------------+----------------------------------------------------
-Select: (1) use their version, (2) use your version,
-        (12) their version first, then yours,
-        (21) your version first, then theirs,
-        (e1) edit their version and use the result,
-        (e2) edit your version and use the result,
-        (eb) edit both versions and use the result,
-        (p) postpone this conflicting section leaving conflict markers,
-        (a) abort file merge and return to main menu: 12
-Merge of 'axel_vidmark/av.txt' completed.
-Select: (p) postpone, (df) show diff, (e) edit file, (m) merge,
-        (r) mark resolved, (mc) my side of conflict,
-        (tc) their side of conflict, (s) show all options: r
-Resolved conflicted state of 'axel_vidmark/av.txt'
-Summary of conflicts:
-  Text conflicts: 0 remaining (and 1 already resolved)
-axvi@axvi-VirtualBox:/tmp/linum3/svntesting$ cat axel_vidmark/av.txt 
-ändring på samma rad i kopian
-ändring på annan rad i kopian
-en liten annan ändring på första raden
-en liten annan ändring på andra raden
-axvi@axvi-VirtualBox:/tmp/linum3/svntesting$ svn commit -m "uppdatering efter att ha löst konflikten"
-Sending        axel_vidmark/av.txt
-Transmitting file data .
-Committed revision 2570.
-axvi@axvi-VirtualBox:/tmp/linum3/svntesting$ cd /tmp/linum3/svntestingcopy/
-axvi@axvi-VirtualBox:/tmp/linum3/svntestingcopy$ svn update
-Updating '.':
-U    axel_vidmark/av.txt
-Updated to revision 2570.
-axvi@axvi-VirtualBox:/tmp/linum3/svntestingcopy$ cat axel_vidmark/av.txt 
-ändring på samma rad i kopian
-ändring på annan rad i kopian
-en liten annan ändring på första raden
-en liten annan ändring på andra raden
-\end{verbatim}
-\end{itemize}
+Uppgift:
+Skriv en kort beskrivning av hur samarbetet gått samt en reflektion över vad som krävs för att ett sådant här arbete ska fungera även i större skala med betydligt större skara utvecklare och större kodbas.
+ 
+
 
 
 
