@@ -3,27 +3,12 @@
 # Electrotest.c - main file for Ex.6 
 # Created 20170322 by A.M. 
 */
-
-/*Ange spänningskälla i V: 50
-Ange koppling[S | P]: S
-Antal komponenter: 3
-Komponent 1 i ohm: 300
-Komponent 2 i ohm: 500
-Komponent 3 i ohm: 598
-Ersättningsresistans:
-1398,0 ohm
-Effekt:
-1.78 W
-Ersättningsresistanser i E12-serien kopplade i serie:
-1200
-180
-18
-*/ 
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <malloc.h>
-
+#include "./lib1/libresistance.h" // quick&dirty, use includepath instead.
 int returnValue;
 float spanningskalla;
 char koppling;
@@ -54,7 +39,11 @@ int main(void)
       if (returnValue !=1|| j<0) return (EXIT_FAILURE);
       ohms[i]=j;
     } // end of for i
+ 
+  printf("Ersättningsresistans: %f\n",
+	 calc_resistance(antalKomponenter,koppling, ohms));
 
-  printf("Ersättningsresistans: \n");
-
+  printf("Effekt: %f\n",-1.0f);
+  printf("Ersättningsresistanser i E12-serien kopplade i serie: \n");
+  return (0);
 } // end of int main(void)
