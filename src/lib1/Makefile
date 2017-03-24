@@ -9,7 +9,7 @@
 CC = gcc
 LIBFLAG = -L. -lgdb -Wl,-rpath,.
 
-all:	testresistance
+all:	testresistance libresistance.so
 
 testresistance:	test_libresistance.c libresistance.o
 	ar crv libresistance.a libresistance.o
@@ -18,6 +18,7 @@ testresistance:	test_libresistance.c libresistance.o
 libresistance.o:	libresistance.c libresistance.h 
 #	$(CC) -c -shared -fPIC libresistance.c -lm -o libresistance.so libresistance.o
 	$(CC) -c -o libresistance.o libresistance.c -lm
-
+libresistance.so:
+	$(CC) -c -shared -fPIC libresistance.c -lm -o libresistance.so
 clean:
-	rm -f libresistance.so libresistance.o testresistance libresistance.a
+	rm -f libresistance.so libresistance.o testresistance libresistance.a libresistance.so
