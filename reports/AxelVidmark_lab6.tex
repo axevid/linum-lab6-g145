@@ -41,61 +41,149 @@
 
 \section*{Del 1}\label{sec:del1}
 
-Uppgift:
-\begin{enumerate}
+\subsection*{Uppgift:}
 Redovisa en beskrivning av det egna biblioteket och applikationen vad gäller:
 
-Funktion och användning.
-En algoritmbeskrivning.
-Hur du kompilerat och testat det i ett eget program. Beskriv vilka kommandon du använder för att kompilera biblioteket och hur du sedan använder biblioteket i ditt huvudprogram.
-Beskriv de växlar du använt till kommandona ovan och vad var och en av dessa har för funktion.
+\begin{enumerate}
+
+\item Funktion och användning.
+\item En algoritmbeskrivning.
+\item Hur du kompilerat och testat det i ett eget program. Beskriv vilka kommandon du använder för att kompilera biblioteket och hur du sedan använder biblioteket i ditt huvudprogram.
+\item Beskriv de växlar du använt till kommandona ovan och vad var och en av dessa har för funktion.
 \end{enumerate}
-\begin{verbatim}
 Biliotek 2, libpower.so
-
+\newline
 Ström som passerar ett motstånd värmer upp motståndet med en viss effekt (P). Effekten kan beräknas med hjälp av spänningen och ström eller spänning och motståndsvärdet enligt dessa formler:
+\begin{itemize}
+\item $P = U * I$  (Spänning gånger strömmen)
 
-P = U * I  (Spänning gånger strömmen)
-
-P = U^2 / R (Spänning i kvadrat delat i resistansen)
-
+\item $P = U^2 / R$ (Spänning i kvadrat delat i resistansen)
+\end{itemize}
 Skriv ett bibliotek, libpower.so, med funktioner för att beräkna den totala effektutvecklingen i en krets med en spänningskälla kopplad i serie med en en resistans:
-
+\begin{verbatim}
 float calc_power_r(float volt, float resistance);
 
 float calc_power_i(float volt, float current);
 \end{verbatim}
 
-\vspace{10pt}
-Svar:
+\subsection*{Svar:}
 
+Biblioteket libpower innehåller två funktioner för att räkna ut värmeutvecklingen i ett motstånd med hjälp att spänning och ström eller spänning och motsånd. Algoritmen för de två funktionerna är beskriven med pseudokod nedan:
 \begin{verbatim}
-axvi@axvi-VirtualBox:/tmp$ sudo apt-get install git
-
-
+float calc_power_r(float volt, float resistance):
+    p = powf(volt, 2.)/resistance
+float calc_power_i(float volt, float current):
+    p = volt * current;
 \end{verbatim}
+Testprogrammet \verb#testpower# skriver ut
+\begin{verbatim}
+Effekten när spänningen är 50 V och resistansen är 300 ohm är 8.333333
+Den borde vara 8.3
+Effekten när spänningen är 50 V och strömmen är 0.2 A är 10.000000
+Den borde vara 10
+\end{verbatim}
+Där outputten är generad med hjälp av biblioteksfunktionerna.
 
+För att testa mitt eget program så skapade jag en enkel makefile. För testning lokalt statiskt länkade bibliotek använder jag först
+\begin{verbatim}
+    gcc -c -fPIC libpower.c -lm
+\end{verbatim}
+för att generera biblioteket. -c sätter ihop filerna utan någn länkning, -fPIC generar en fil som är ``oberoende av position'' dvs den kan exekveras utan ändras för att ta hänsyn till var den laddades in i minnet,  medan -lm säger åt den att hämta mattebiblioteket som behövdes för powf.
+
+Sedan länkar jag det till min testfil genom:
+\begin{verbatim}
+    ar rcs libpower.a libpower.o
+    gcc -static test_libpower.c -o testpower -L. -lpower -lm
+\end{verbatim}
+ar skapar ett arkiv libpower.a för att länkas in i programmet. rcs innebär sätt in, skapa, skriv till arkivet. Sedan länkar vi arkivet statiskt (-static), med bibliotek i nuvarande dir (-L.) och inkluderar mattepaketet.
 
 \cleardoublepage
 
 \section*{Del 2}\label{sec:del2}
 
-Uppgift:
+\subsection*{Uppgift:}
 Skriv en Makefile med dessa regler:
+\begin{itemize}
+\item lib, för att bygga enbart biblioteket.
+\item all, För att bygga både programmet och biblioteken där biblioteken läggs i en egen katalog, lib,  under den man är jus nu, tex \verb#/home/bl/electro/lib/#. Här ska programmet länkas för att använda de lokala biblioteken. OBS! Ni får inte temporärt ändra libsökvägarna i \verb#LD_LIBRARY_PATH#!
+install. Här kopierar du både programmet och biblioteken till lämpliga kataloger (tex \verb#/usr/bin/# och \verb#/usr/lib/#) och länkar så att programmet använder de publika biblioteken.
+\item Redovisa en beskrivning av hur du länkat in alla 3 bibliotek och använt det i ett huvudprogram enligt ovan. Beskriv också vilka du jobbat med.
 
-lib, för att bygga enbart biblioteket.
-all, För att bygga både programmet och biblioteken där biblioteken läggs i en egen katalog, lib,  under den man är jus nu, tex /home/bl/electro/lib/. Här ska programmet länkas för att använda de lokala biblioteken. OBS! Ni får inte temporärt ändra libsökvägarna i LD_LIBRARY_PATH!
-install. Här kopierar du både programmet och biblioteken till lämpliga kataloger (tex /usr/bin/ och /usr/lib/) och länkar så att programmet använder de publika biblioteken.
-Redovisa en beskrivning av hur du länkat in alla 3 bibliotek och använt det i ett huvudprogram enligt ovan. Beskriv också vilka du jobbat med.
+\item Beskriv vilka kommandon och växlar du använder för att kompilera biblioteken och hur du sedan använder biblioteken i ditt huvudprogram.
+\end{itemize}
+\subsection*{Svar:}
 
-Beskriv vilka kommandon och växlar du använder för att kompilera biblioteken och hur du sedan använder biblioteken i ditt huvudprogram.
- 
+ Först så skapar vi alla bibliotek och lägger dem i en undermapp.
 \begin{verbatim}
-> mkdir bjorne_lindberg
-> echo "Hello svn world" > bjorne_lindberg/bl.txt
-> svn add bjorne_lindberg
-> svn commit -m "Lagt till en katalog med fil"
+lib: lib1 lib2 lib3
+
+lib1: src/lib1/libresistance.c src/lib1/libresistance.h
+    gcc -c -fPIC src/lib1/libresistance.c -o lib/libresistance.o
+    gcc -shared -o lib/libresistance.so lib/libresistance.o
+
+lib2: src/lib2/libpower.c src/lib2/libpower.h 
+    gcc -c -fPIC src/lib2/libpower.c -o lib/libpower.o -lm
+    gcc -shared -o lib/libpower.so lib/libpower.o -lm
+
+lib3: src/lib3/libcomponent.c src/lib3/libcomponent.h 
+    gcc -c -fPIC src/lib3/libcomponent.c -o lib/libcomponent.o -lm
+    gcc -shared -o lib/libcomponent.so lib/libcomponent.o -lm
 \end{verbatim}
+Här är alla växlar detsamma som i del 1, med skillnaden att vi har ett extra steg för att skapa delade bibliotek, -shared skapar ett bibliotek för delad länkning.
+
+För att testa programmet och bygga det så att det använder de lokala biblioteken så använder vi sen följande del av makefilen.
+\begin{verbatim}
+all: lib src/electrotest.c
+    ar rcs lib/libresistance.a lib/libresistance.o
+    ar rcs lib/libpower.a lib/libpower.o
+    ar rcs lib/libcomponent.a lib/libcomponent.o
+    gcc -static src/electrotest.c -Llib -lpower -lresistance -lcomponent -o electrotest_static -lm
+\end{verbatim}
+Här skapar vi på samma sätt som i uppgift 1 lokala arkiv som vi sedan länkar in statiskt i programmet.
+
+Slutligen för att installera biblioteken och programmet så det använder de delade biblioteken använder vi följande.
+\begin{verbatim}
+install: installlib electrotest
+    install electrotest /usr/local/bin
+
+installlib: lib1 lib2 lib3
+    install lib/libpower.so /usr/lib
+    install lib/libresistance.so /usr/lib
+    install lib/libcomponent.so /usr/lib
+
+electrotest: 
+    gcc -o electrotest src/electrotest.c -lresistance -lpower -lcomponent -lm
+\end{verbatim}
+Här installera vi först de tre biblioteken och länkar sen in dem från /usr/lib.
+Kör vi nu ldd på det program vi installerade och exekverar det installerade electrotest får vi följande output.
+\begin{verbatim}
+axvi@axvi-VirtualBox:~/linum6$ ldd electrotest 
+    linux-gate.so.1 =>  (0xb77f2000)
+    libresistance.so => /usr/lib/libresistance.so (0xb77d4000)
+    libpower.so => /usr/lib/libpower.so (0xb77d1000)
+    libcomponent.so => /usr/lib/libcomponent.so (0xb77cd000)
+    libc.so.6 => /lib/i386-linux-gnu/libc.so.6 (0xb7612000)
+    libm.so.6 => /lib/i386-linux-gnu/libm.so.6 (0xb75c5000)
+    /lib/ld-linux.so.2 (0x800ab000)
+axvi@axvi-VirtualBox:~/linum6$ electrotest 
+Ange spänningskälla i V: 50
+Ange koppling[S | P]: S
+Antal komponenter: 3
+Komponent 1 i ohm: 300
+Komponent 2 i ohm: 500
+Komponent 3 i ohm: 598
+Ersättningsresistans: 1398.000000
+Effekt: 1.788269
+Ersättningsresistanser i E12-serien kopplade i serie:
+1200
+180
+18
+\end{verbatim}
+
+De olika biblioteken länkades in i huvudprogrammet med hjälp av deras headerfiler. I den här uppgiften jobbade jag med:
+
+\begin{itemize}
+    \item Antero Metso
 
 \cleardoublepage
 
