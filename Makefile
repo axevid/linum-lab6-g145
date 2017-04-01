@@ -8,16 +8,12 @@ CC = gcc
 #INCLUDE = .
 
 # Options
-CFLAGS = -O -Wall
-SUBDIRS = lib1 lib2 lib3
+CFLAGS = -O
+
 
 # all:	electrotest
 
 .PHONY:	subdirs $(SUBDIRS)
-subdirs: $(SUBDIRS)
-
-$(SUBDIRS):	
-	$(MAKE) -C $@
 
 
 
@@ -26,7 +22,6 @@ all: lib src/electrotest.c
 	ar rcs lib/libpower.a lib/libpower.o
 	ar rcs lib/libcomponent.a lib/libcomponent.o
 	$(CC) -static src/electrotest.c -Llib -lpower -lresistance -lcomponent -o electrotest_static -lm
-#	$(CC) src/electrotest.c lib/libresistance.o lib/libpower.o lib/libcomponent.o -Llib -lpower -lresistance -lcomponent
 
 lib: lib1 lib2 lib3
 
@@ -45,7 +40,6 @@ lib3: src/lib3/libcomponent.c src/lib3/libcomponent.h
 electrotest: 
 	$(CC) $(CFLAGS) -o electrotest src/electrotest.c -lresistance -lpower -lcomponent -lm
 
-.PHONY:	clean
 
 clean:
 	rm -f lib/*.o lib/*.so lib/*.a electrotest electrotest_static

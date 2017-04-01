@@ -54,7 +54,7 @@ int main(void)
 
 	float* res_array = malloc(3 * sizeof(float));
 
-	int count = e_resistance(1398.0, res_array);
+	int count = e_resistance(ersattningsResistans, res_array);
 
 	printf("Ersättningsresistanser i E12-serien kopplade i serie:\n");
 	for (int i = 0; i < count; i += 1)
