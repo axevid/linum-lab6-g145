@@ -9,8 +9,6 @@
 #include <math.h>
 #include <malloc.h>
 #include "./lib1/libresistance.h" // quick&dirty, use includepath instead.
-#include "./lib2/libpower.h" // quick&dirty, use includepath instead.
-#include "./lib3/libcomponent.h" // quick&dirty, use includepath instead.
 int returnValue;
 float spanningskalla;
 char koppling;
