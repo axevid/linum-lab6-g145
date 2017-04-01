@@ -54,13 +54,13 @@ install: installlib electrotest
 	install electrotest /usr/local/bin
 
 installlib: lib1 lib2 lib3
-	install lib/libpower.so /usr/local/lib
-	install lib/libresistance.so /usr/local/lib
-	install lib/libcomponent.so /usr/local/lib
+	install lib/libpower.so /usr/lib
+	install lib/libresistance.so /usr/lib
+	install lib/libcomponent.so /usr/lib
 
 uninstall:
-	rm -f  /usr/local/lib/libpower.so
-	rm -f /usr/local/lib/libresistance.so
-	rm -f /usr/local/lib/libcomponent.so
+	rm -f  /usr/lib/libpower.so
+	rm -f /usr/lib/libresistance.so
+	rm -f /usr/lib/libcomponent.so
 	rm -f /usr/local/bin/electrotest
 
