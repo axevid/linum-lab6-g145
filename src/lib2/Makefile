@@ -7,22 +7,22 @@
 
 
 CC = gcc
-LIBFLAG = 
 
 all:	testpower
 
-testpower:	test_libpower.c libpower.o
-	$(CC) test_libpower.c libpower.o -o testpower -L -lpower -lm
+testpower:	test_libpower.c libpower
+	ar rcs libpower.a libpower.o
+	$(CC) -static test_libpower.c -o testpower -L. -lpower -lm
 
-libpower.so:	libpower.c libpower.h 
-	$(CC) -c -shared -fPIC libpower.c -lm
+libpower:	libpower.c libpower.h 
+	$(CC) -c -fPIC libpower.c -lm
 	$(CC) -shared -o libpower.so libpower.o -lm
 
 install: libpower.so
-	install libpower.so /usr/local/lib
+	install libpower.so /usr/lib
 
 uninstall: 
-	rm -f /usr/local/lib/libpower.so
+	rm -f /usr/lib/libpower.so
 
 clean:
 	rm -f libpower.so libpower.o testpower libpower.a
