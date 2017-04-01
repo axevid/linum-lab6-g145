@@ -7,17 +7,22 @@
 
 
 CC = gcc
-LIBFLAG = -L. -lgdb -Wl,-rpath,.
+LIBFLAG = 
 
 all:	testpower
 
 testpower:	test_libpower.c libpower.o
-	ar crv libpower.a libpower.o
-	$(CC) test_libpower.c libpower.o  -o testpower -L -lpower -lm
+	$(CC) test_libpower.c libpower.o -o testpower -L -lpower -lm
 
-libpower.o:	libpower.c libpower.h 
-#	$(CC) -c -shared -fPIC libpower.c -lm -o libpower.so libpower.o
-	$(CC) -c -o libpower.o libpower.c -lm
+libpower.so:	libpower.c libpower.h 
+	$(CC) -c -shared -fPIC libpower.c -lm
+	$(CC) -shared -o libpower.so libpower.o -lm
+
+install: libpower.so
+	install libpower.so /usr/local/lib
+
+uninstall: 
+	rm -f /usr/local/lib/libpower.so
 
 clean:
 	rm -f libpower.so libpower.o testpower libpower.a
