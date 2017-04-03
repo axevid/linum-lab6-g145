@@ -23,6 +23,8 @@
 # The return value is the resulting resistance.
 #
 */
+#define PARALLEL 'P'
+#define SERIAL   'S'
 
 #include <stdio.h>
 #include "libresistance.h"
@@ -31,43 +33,49 @@ float calc_resistance (int count, char conn, float *array) {
   float equivalent_resistance = 0.0f;
   int i = 0;
   
-  if (count==0) return(0.0f);
   if (array == NULL)
     {
       return(-1); /* handle null pointer */
     }
   else
-    {
-      // Proceed
-      switch(conn) {
-      case PARALLEL: /* parallel resistance */
-	/* Code */
-	for(i=0;i<count;i++) if (array[i] == 0) return(-1); /* check for 1/0 */
+    if (count==0) return(-1); /* Error condition */
+    else  
+      {
+	// Proceed
+	switch(conn) {
+	case PARALLEL: /* parallel resistance */
+	  /* Code */
 
-	equivalent_resistance = (1.0f/array[0]); /* first term */	
-
-	for(i=1;i<count;i++) /* loop for the rest */
-	  {
-	    tmp = (1.0f/equivalent_resistance)+((1.0f/array[i]));        
-	    equivalent_resistance = (1.0f/tmp);
-	  };
-	break;
-      case SERIAL: /* series resistance */
-	/* Code */
-	for (i = 0; i < count; i++) {
-	  equivalent_resistance = equivalent_resistance + array[i];
+	  if (count==1 && array[0]!=0 ) return(array[0]);
+	  if (count==1 && array[0]==0 ) return(-1);
+	  
+	  for(i=0;i<count;i++) if (array[i] == 0) return(-1); /* check for null pointer */
+	  tmp=0;
+	  for (i=0;i<count;i++) tmp=tmp+1/array[i];
+	  equivalent_resistance = 1/tmp;
+	  break;
+	  
+	case SERIAL: /* series resistance */
+	  /* Code */
+	  
+	  if (count==1) return(array[0]);
+	 
+	  equivalent_resistance = 0;
+	  
+	  for (i = 0; i < count; i++) {
+	    equivalent_resistance = equivalent_resistance + array[i];
+	  }
+	  
+	  break;
+	default:
+	  
+	  return(-1);
+	  
+	  break;
 	}
 	
-	break;
-      default:
-	
-	return(-1);
-	
-	break;
-      }
-      
-    }  
+      }  
   
   return(equivalent_resistance);  
 }
- 
+
