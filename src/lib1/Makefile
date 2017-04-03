@@ -24,9 +24,9 @@ libresistance.so:
 	$(CC) -shared -o $(CURDIR)/lib/libresistance.so libresistance.o 
 
 clean:
-	rm -f $(CURDIR)/lib/libresistance.so libresistance.o testresistance libresistance.so
+	rm -f $(CURDIR)/lib/libresistance.so libresistance.o test_libresistance libresistance.so test_libresistance_install
 install: lib
-	$(CC) $(CFLAGS) -o test_libresistance_install test_libresistance.c -lm -lresistance 
+	$(CC) $(CFLAGS) -o test_libresistance_install test_libresistance.c -lm -lresistance -L$(CURDIR)/lib
 	@if [ -d $(INSTDIR) ]; \
 	then \
 	cp $(CURDIR)/lib/libresistance.so $(INSTDIR);\
@@ -38,7 +38,7 @@ install: lib
 	fi
 	@if [ -d $(BININSTDIR) ]; \
 	then \
-	cp $(CURDIR)/lib/test_libresistance_install $(BININSTDIR)/test_libresistance;\
+	cp $(CURDIR)/test_libresistance_install $(BININSTDIR)/test_libresistance;\
 	chmod a+x $(BININSTDIR)/test_libresistance;\
 	chmod og-w $(BININSTDIR)/test_libresistance;\
 	echo "Test binary installed in $(BININSTDIR)";\
