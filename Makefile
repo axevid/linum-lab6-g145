@@ -8,8 +8,7 @@ CC = gcc
 #INCLUDE = .
 
 # Options
-CFLAGS = -O
-
+CFLAGS = -O 
 
 # all:	electrotest
 
@@ -21,7 +20,7 @@ all: lib src/electrotest.c
 	ar rcs lib/libresistance.a lib/libresistance.o
 	ar rcs lib/libpower.a lib/libpower.o
 	ar rcs lib/libcomponent.a lib/libcomponent.o
-	$(CC) -static src/electrotest.c -Llib -lpower -lresistance -lcomponent -o electrotest_static -lm
+	$(CC) -static src/electrotest.c -Llib -lpower -lresistance -lcomponent -o electrotest_static -lm -std=c99
 
 lib: lib1 lib2 lib3
 
@@ -34,11 +33,11 @@ lib2: src/lib2/libpower.c src/lib2/libpower.h
 	$(CC) -shared -o lib/libpower.so lib/libpower.o -lm
 
 lib3: src/lib3/libcomponent.c src/lib3/libcomponent.h 
-	$(CC) -c -fPIC src/lib3/libcomponent.c -o lib/libcomponent.o -lm
-	$(CC) -shared -o lib/libcomponent.so lib/libcomponent.o -lm
+	$(CC) -c -fPIC src/lib3/libcomponent.c -o lib/libcomponent.o -lm -std=c99 
+	$(CC) -shared -o lib/libcomponent.so lib/libcomponent.o -lm -std=c99    
 
 electrotest: 
-	$(CC) $(CFLAGS) -o electrotest src/electrotest.c -lresistance -lpower -lcomponent -lm
+	$(CC) $(CFLAGS) -o electrotest src/electrotest.c -lresistance -lpower -lcomponent -lm -std=c99 
 
 
 clean:
