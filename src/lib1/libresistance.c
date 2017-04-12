@@ -37,6 +37,7 @@
  *  @param *array A pointer to an array of component values ​​of size of count.
  *  @return Equivalent resistance of the resistor network. 
  *
+ *  @bugs The program cannot always notice, if count and the size of an array does not agree. The program fails, if the array is too big compared to the available memory.
  */ 
 
 float calc_resistance (int count, char conn, float *array) {
