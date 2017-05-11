@@ -15,8 +15,8 @@ CFLAGS = -O
 .PHONY:	subdirs $(SUBDIRS)
 
 
-
-all: lib src/electrotest.c
+#all: lib src/electrotest.c
+all: lib electrotest
 	ar rcs lib/libresistance.a lib/libresistance.o
 	ar rcs lib/libpower.a lib/libpower.o
 	ar rcs lib/libcomponent.a lib/libcomponent.o
@@ -42,7 +42,7 @@ electrotest:
 
 
 clean:
-	rm -f lib/*.o lib/*.so lib/*.a electrotest electrotest_static
+	rm -f lib/*.o lib/*.so lib/*.a electrotest electrotest_static electrotest_dynamic
 
 install: installlib electrotest
 	install electrotest /usr/local/bin
