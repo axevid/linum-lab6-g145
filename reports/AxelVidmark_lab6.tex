@@ -124,10 +124,10 @@ lib2: src/lib2/libpower.c src/lib2/libpower.h
     gcc -shared -o lib/libpower.so lib/libpower.o -lm
 
 lib3: src/lib3/libcomponent.c src/lib3/libcomponent.h 
-    gcc -c -fPIC src/lib3/libcomponent.c -o lib/libcomponent.o -lm
-    gcc -shared -o lib/libcomponent.so lib/libcomponent.o -lm
+    gcc -c -fPIC src/lib3/libcomponent.c -o lib/libcomponent.o -lm -std=c99
+    gcc -shared -o lib/libcomponent.so lib/libcomponent.o -lm -std=c99
 \end{verbatim}
-Här är alla växlar detsamma som i del 1, med skillnaden att vi har ett extra steg för att skapa delade bibliotek, -shared skapar ett bibliotek för delad länkning.
+Här är alla växlar detsamma som i del 1, med skillnaden att vi har ett extra steg för att skapa delade bibliotek, -shared skapar ett bibliotek för delad länkning. Här var vi även tvungna att specifiera vilken c-standard kompilatorn skulle jobba med då en av inte kunde kompilera pga initering av variabel i en for-loop (c99)
 
 För att testa programmet och bygga det så att det använder de lokala biblioteken så använder vi sen följande del av makefilen.
 \begin{verbatim}
@@ -135,34 +135,51 @@ all: lib src/electrotest.c
     ar rcs lib/libresistance.a lib/libresistance.o
     ar rcs lib/libpower.a lib/libpower.o
     ar rcs lib/libcomponent.a lib/libcomponent.o
-    gcc -static src/electrotest.c -Llib -lpower -lresistance -lcomponent -o electrotest_static -lm
+   
+    electrotest: 
+		$(CC)  -o electrotest src/electrotest.c -Wl,-rpath,$(CURDIR)/lib -L$(CURDIR)/lib -lpower -lresistance -lcomponent -lm -std=c99
 \end{verbatim}
-Här skapar vi på samma sätt som i uppgift 1 lokala arkiv som vi sedan länkar in statiskt i programmet.
+\verb!-Wl,-rpath,$(CURDIR)/lib! lägger till den lokala mappen med biblitek till körsökvägen.
+\verb!-L$(CURDIR)/lib! justerar sökvägen för bibliotek
+
+Make \verb!electrotest_static! testar statisk länkning:
+
+\begin{verbatim}
+electrotest_static: all
+$(CC) -static src/electrotest.c -Llib -lpower -lresistance -lcomponent -o electrotest_static
+-lm -std=c99
+\end{verbatim}
+Här skapar vi på samma sätt som i uppgift 1 lokala arkiv som vi sedan länkar in statiskt i
+programmet.
 
 Slutligen för att installera biblioteken och programmet så det använder de delade biblioteken använder vi följande.
 \begin{verbatim}
-install: installlib electrotest
-    install electrotest /usr/local/bin
+install: installlib electrotest_global
+	install electrotest_global /usr/local/bin/electrotest
+	installlib: lib1 lib2 lib3
+	install lib/libpower.so /usr/lib
+	install lib/libresistance.so /usr/lib
+	install lib/libcomponent.so /usr/lib
 
-installlib: lib1 lib2 lib3
-    install lib/libpower.so /usr/lib
-    install lib/libresistance.so /usr/lib
-    install lib/libcomponent.so /usr/lib
-
-electrotest: 
-    gcc -o electrotest src/electrotest.c -lresistance -lpower -lcomponent -lm
+electrotest_global:
+		$(CC) $(CFLAGS) -o electrotest_global src/electrotest.c ...
+		... -lresistance -lpower -lcomponent -rpath -lm -std=c99
 \end{verbatim}
+(Obs: ingen sökväg till lokal bibliotek här.)
+
 Här installera vi först de tre biblioteken och länkar sen in dem från /usr/lib.
 Kör vi nu ldd på det program vi installerade och exekverar det installerade electrotest får vi följande output.
 \begin{verbatim}
-axvi@axvi-VirtualBox:~/linum6$ ldd electrotest 
-    linux-gate.so.1 =>  (0xb77f2000)
-    libresistance.so => /usr/lib/libresistance.so (0xb77d4000)
-    libpower.so => /usr/lib/libpower.so (0xb77d1000)
-    libcomponent.so => /usr/lib/libcomponent.so (0xb77cd000)
-    libc.so.6 => /lib/i386-linux-gnu/libc.so.6 (0xb7612000)
-    libm.so.6 => /lib/i386-linux-gnu/libm.so.6 (0xb75c5000)
-    /lib/ld-linux.so.2 (0x800ab000)
+$ ldd /usr/local/bin/electrotest
+	linux-vdso.so.1 => (0x00007ffc9b1da000)
+	libresistance.so => /usr/lib/libresistance.so (0x00007fc9e3a45000)
+	libpower.so => /usr/lib/libpower.so (0x00007fc9e3843000)
+	libcomponent.so => /usr/lib/libcomponent.so (0x00007fc9e3641000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fc9e3279000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007fc9e2f73000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007fc9e3c47000)
+
+
 axvi@axvi-VirtualBox:~/linum6$ electrotest 
 Ange spänningskälla i V: 50
 Ange koppling[S | P]: S
@@ -193,6 +210,19 @@ De olika biblioteken länkades in i huvudprogrammet med hjälp av deras headerfi
 Skriv en kort beskrivning av hur samarbetet gått samt en reflektion över vad som krävs för att ett sådant här arbete ska fungera även i större skala med betydligt större skara utvecklare och större kodbas.
  
 \subsection*{Svar:}
+
+Samarbetet gick bra, mycket tack vare att vi alla verkade ha liknande förväntningar. Mail fungerar hjälpligt som kommunikationsväg medan det var hjälpsamt att vi innan vi började pratades vid över voip för att stämma av förväntningar och hur vi uppfattat uppgiften.
+
+Tack vare att vi tidigt satte upp en gemensam git-repository som vi alla jobbade mot kunde vi lätt följa vad de andra i gruppen gjorde. Sedan kunde vi mailledes hålla varandra uppdaterade med längre förklaringar av commits vid behov.
+
+Ska man jobba i ännu större grupper eller med större projekt så är det några grunder jag tycker är viktiga:
+
+\begin{itemize}
+     \item Tydliga förväntningar (deadlines, kvalitet etc.)
+     \item Tydlig ansvarsuppdelning
+     \item Tydlig arbetsprocess (i vårt fall: gör ändringar och commita så att alla kan bedöma/kika allt eftersom arbetet fortskrider)
+     \item Tydlig kodstruktur (i vårt fall: iom att den första delen var individuell så ser lösningarna lite olika ut, men för den gemensamma delen så bestämdes det efter den som började, inte helt optimalt men fungerade i det här lilla projektet)
+ \end{itemize}
 
 
 
