@@ -21,6 +21,7 @@ all: lib src/electrotest.c
 	ar rcs lib/libpower.a lib/libpower.o
 	ar rcs lib/libcomponent.a lib/libcomponent.o
 	$(CC) -static src/electrotest.c -Llib -lpower -lresistance -lcomponent -o electrotest_static -lm -std=c99
+	$(CC)  -o electrotest_dynamic src/electrotest.c -Wl,-rpath,./lib -Llib -lpower -lresistance -lcomponent -lm -std=c99
 
 lib: lib1 lib2 lib3
 
