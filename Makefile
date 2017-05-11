@@ -21,7 +21,7 @@ all: lib src/electrotest.c
 	ar rcs lib/libpower.a lib/libpower.o
 	ar rcs lib/libcomponent.a lib/libcomponent.o
 	$(CC) -static src/electrotest.c -Llib -lpower -lresistance -lcomponent -o electrotest_static -lm -std=c99
-	$(CC)  -o electrotest_dynamic src/electrotest.c -Wl,-rpath,./lib -Llib -lpower -lresistance -lcomponent -lm -std=c99
+	$(CC)  -o electrotest_dynamic src/electrotest.c -Wl,-rpath,$(CURDIR)/lib -L$(CURDIR)/lib -lpower -lresistance -lcomponent -lm -std=c99
 
 lib: lib1 lib2 lib3
 
@@ -38,7 +38,7 @@ lib3: src/lib3/libcomponent.c src/lib3/libcomponent.h
 	$(CC) -shared -o lib/libcomponent.so lib/libcomponent.o -lm -std=c99    
 
 electrotest: 
-	$(CC) $(CFLAGS) -o electrotest src/electrotest.c -lresistance -lpower -lcomponent -lm -std=c99 
+	$(CC) $(CFLAGS) -o electrotest src/electrotest.c -Wl,-rpath,$(CURDIR)/lib -L$(CURDIR)/lib -lresistance -lpower -lcomponent -lm -std=c99 
 
 
 clean:
