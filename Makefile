@@ -20,8 +20,8 @@ all: lib electrotest
 	ar rcs lib/libresistance.a lib/libresistance.o
 	ar rcs lib/libpower.a lib/libpower.o
 	ar rcs lib/libcomponent.a lib/libcomponent.o
-	$(CC) -static src/electrotest.c -Llib -lpower -lresistance -lcomponent -o electrotest_static -lm -std=c99
-	$(CC)  -o electrotest_dynamic src/electrotest.c -Wl,-rpath,$(CURDIR)/lib -L$(CURDIR)/lib -lpower -lresistance -lcomponent -lm -std=c99
+#	$(CC) -static src/electrotest.c -Llib -lpower -lresistance -lcomponent -o electrotest_static -lm -std=c99
+#	$(CC)  -o electrotest_dynamic src/electrotest.c -Wl,-rpath,$(CURDIR)/lib -L$(CURDIR)/lib -lpower -lresistance -lcomponent -lm -std=c99
 
 lib: lib1 lib2 lib3
 
@@ -37,15 +37,17 @@ lib3: src/lib3/libcomponent.c src/lib3/libcomponent.h
 	$(CC) -c -fPIC src/lib3/libcomponent.c -o lib/libcomponent.o -lm -std=c99 
 	$(CC) -shared -o lib/libcomponent.so lib/libcomponent.o -lm -std=c99    
 
-electrotest: 
-	$(CC) $(CFLAGS) -o electrotest src/electrotest.c -Wl,-rpath,$(CURDIR)/lib -L$(CURDIR)/lib -lresistance -lpower -lcomponent -lm -std=c99 
-
+electrotest_global: 
+	$(CC) $(CFLAGS) -o electrotest_global src/electrotest.c -Wl,-rpath,$(CURDIR)/lib -L$(CURDIR)/lib -lresistance -lpower -lcomponent -lm -std=c99 
+electrotest:
+	$(CC)  -o electrotest src/electrotest.c -Wl,-rpath,$(CURDIR)/lib -L$(CURDIR)/lib -lpower -lresistance -lcomponent -lm -std=c99
 
 clean:
-	rm -f lib/*.o lib/*.so lib/*.a electrotest electrotest_static electrotest_dynamic
+	rm -f lib/*.o lib/*.so lib/*.a electrotest electrotest_global
 
-install: installlib electrotest
-	install electrotest /usr/local/bin
+install: all installlib electrotest_global
+	$(CC)  -o electrotest_dynamic src/electrotest.c -lpower -lresistance -lcomponent -lm -std=c99
+	install electrotest_global /usr/local/bin/electrotest
 
 installlib: lib1 lib2 lib3
 	install lib/libpower.so /usr/lib
